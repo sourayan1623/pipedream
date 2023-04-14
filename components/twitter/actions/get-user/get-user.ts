@@ -33,15 +33,19 @@ export default defineAction({
     getUserFields,
   },
   async run({ $ }): Promise<ResponseObject<User>> {
-    const userId = await this.getUserId();
-
-    const params: GetUserParams = {
+    let response: Promise<ResponseObject<User>>;
+    const params = {
       $,
       params: this.getUserFields(),
-      userId,
-    };
+    }
 
-    const response = await this.app.getUser(params);
+    if (this.userNameOrId === "me") {
+      response = await this.app.getAuthenticatedUser(params);
+    } else {
+      (params as GetUserParams).userId = await this.getUserId(); 
+
+      response = await this.app.getUser(params);
+    }
 
     $.export("$summary", "Successfully retrieved user");
 

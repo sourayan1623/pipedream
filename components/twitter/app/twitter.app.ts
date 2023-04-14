@@ -344,10 +344,13 @@ export default defineApp({
         ...args,
       });
     },
-    async getAuthenticatedUserId(): Promise<User["id"]> {
-      const response = await this._httpRequest({
+    async getAuthenticatedUser(): Promise<ResponseObject<User>> {
+      return this._httpRequest({
         url: "/users/me",
       });
+    },
+    async getAuthenticatedUserId(): Promise<User["id"]> {
+      const response = await this.getAuthenticatedUser();
       return response.data.id;
     },
     async getUserLikedTweets({
